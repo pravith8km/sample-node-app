@@ -11,28 +11,29 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    # Step 1: Checkout your code
+    # Step 1: Checkout your repo
     - name: Checkout repository
       uses: actions/checkout@v4
 
-    # Step 2: Log in to Docker Hub using secrets
+    # Step 2: Log in to Docker Hub
     - name: Log in to Docker Hub
       uses: docker/login-action@v3
       with:
         username: ${{ secrets.DOCKERHUB_USERNAME }}
         password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-    # Step 3: Build and tag the image
+    # Step 3: Generate a consistent tag
+    - name: Set image tag
+      id: vars
+      run: echo "TAG=$(date +%Y%m%d%H%M%S)" >> $GITHUB_ENV
+
+    # Step 4: Build the Docker image
     - name: Build Docker image
       run: |
-        IMAGE_NAME=pravith8kmdocker/sample-node-app
-        TAG=$(date +%Y%m%d%H%M%S)
-        docker build -t $IMAGE_NAME:$TAG -t $IMAGE_NAME:latest .
+        docker build -t pravith8kmdocker/sample-node-app:${{ env.TAG }} -t pravith8kmdocker/sample-node-app:latest .
 
-    # Step 4: Push the image to Docker Hub
+    # Step 5: Push both tags
     - name: Push Docker image
       run: |
-        IMAGE_NAME=pravith8kmdocker/sample-node-app
-        TAG=$(date +%Y%m%d%H%M%S)
-        docker push $IMAGE_NAME:$TAG
-        docker push $IMAGE_NAME:latest
+        docker push pravith8kmdocker/sample-node-app:${{ env.TAG }}
+        docker push pravith8kmdocker/sample-node-app:latest
