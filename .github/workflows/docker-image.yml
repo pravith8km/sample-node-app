@@ -3,6 +3,9 @@ name: Docker Image CI
 on:
   push:
     branches: [ "master" ]
+    paths:
+      - 'Dockerfile'
+      - '.github/workflows/docker-image.yml'  # optional: re-run if workflow itself changes    
   pull_request:
     branches: [ "master" ]
 
